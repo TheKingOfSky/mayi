@@ -20,14 +20,65 @@ class login_api extends MY_Controller
 	public function log_in()
 	{
 		//POST接收数据并赋值
+		$username = $this->input->get_post( 'username', TRUE );
+		$password = $this->input->get_post( 'password', TRUE );
 
 		//检查用户名是否符合规则
+		if( empty( $username ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 用户名为空';
+			exit( json_encode( $arr ) );
+		}
+
+		if( strlen( $username ) < 6 )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 输入账号过短';
+			exit( json_encode( $arr ) );
+		}
+
+		if( ! is_phone( $username ) && ! is_email( $username ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 您输入的不是一个电话或邮箱';
+			exit( json_encode( $arr ) );
+		}
+		
+		//检查用户名否存在
+		if( ! $this->user_lib->username_isset( $username ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 用户不存在';
+			exit( json_encode( $arr ) );
+		}
 
 		//检查密码是否符合规则
+		if( empty( $password ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 密码为空';
+			exit( json_encode( $arr ) );
+		}
+		
+		if( strlen( $username ) < 6 )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 密码过短';
+			exit( json_encode( $arr ) );
+		}
 
 		//用$this->_check_login检测登陆的用户名、密码是否匹配
+		$user = $this->_check_login( $username, $password );
 
 		//返回是否登录成功，如果登录成功返回用户数据
+		if( empty( $username ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 密码错误';
+			exit( json_encode( $arr ) );
+			
+		}
 	}
 
 	//@@FuncName:_check_login
@@ -39,7 +90,7 @@ class login_api extends MY_Controller
 	private function _check_login( $username, $password )
 	{
 		//根据用户名取出用户数据
-
+		
 		//验证用户名和密码是否匹配
 
 		//如果匹配失败返回false,如果匹配成功返回用户信息

@@ -20,32 +20,43 @@ class register_api extends MY_Controller
 	public function register()
 	{
 		//POST接收数据并给变量赋值
-		$login = $this->input->get->post( 'login', TRUE );
-		if( empty( $login ) ) exit( json_encode( array( 'code'=>20010, 'message'=>'[error] 手机或邮箱不能为空' ) ) );
+		$username = $this->input->get_post( 'username', TRUE );
+		$password = $this->input->get_post( 'password', TRUE );
+
+		//查检用户名是否是否的
+		if( empty( $username ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 登录账号不能为空';
+			exit( json_encode( $arr ) );
+		}
+
+		//检查用户名长度
+		if( strlen( $username ) < 6 )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 登录账号过短';
+			exit( json_encode( $arr ) );
+		}
+
+		//检查用户名是否存在
+		if( $this->user_lib->username_isset( $username ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 用户已存在';
+			exit( json_encode( $arr ) );
+		}
 
 		//查看输入的是手机号码还是邮箱
-		if( is_numeric( $login ) ) $mobile=$login;
-		else $email=$login;
-
-		if( ! empty( $mobile ) )
+		if( ! is_phone( $username ) && ! is_email( $username ) )
 		{
-			if( ! is_mobile( $mobile ) )
-			{
-				exit( json_encode( array( 'code'=>20010, 'message'=>'[error] 手机号码格式不正确' ) ) );
-			}
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 手机或邮箱格式不正确';
+			exit( json_encode( $arr ) );
 		}
-
-		if( ! empty( $email ) )
-		{
-			if( ! is_email( $email ) )
-			{
-				exit( json_encode( array( 'code'=>20010, 'message'=>'[error] 邮箱格式不正确' ) ) );
-			}
-		}
-
-		//按规则检查手机号码或邮箱
 
 		//按规则检查密码
+		if( ! is_password( $password ) )
 
 		//检查两次密码输入是否一致
 

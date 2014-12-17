@@ -4,7 +4,7 @@
 //@@Type:API-Controller
 //@@Anthor:titan
 //@@Time:
-class login_api extends MY_Controller
+class login_api extends App_Controller
 {
 	public function __construct()
 	{
@@ -72,13 +72,16 @@ class login_api extends MY_Controller
 		$user = $this->_check_login( $username, $password );
 
 		//返回是否登录成功，如果登录成功返回用户数据
-		if( empty( $username ) )
+		if( empty( $user ) )
 		{
 			$arr['code'] = 20010;
 			$arr['message'] = '[error] 密码错误';
 			exit( json_encode( $arr ) );
-			
 		}
+
+		$arr['code'] = 10010;
+		$arr['message'] = '[success]';
+		json_encode( json_encode( $arr ) );
 	}
 
 	//@@FuncName:_check_login
@@ -90,12 +93,11 @@ class login_api extends MY_Controller
 	private function _check_login( $username, $password )
 	{
 		//根据用户名取出用户数据
-		
+		$user = $this->user_model->get_user();
 		//验证用户名和密码是否匹配
-
+		if( $user['password'] == encode_password( $password ) ) return $user;
 		//如果匹配失败返回false,如果匹配成功返回用户信息
+		return FALSE;
 	}
 }
-
-
 ?>

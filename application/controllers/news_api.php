@@ -20,7 +20,7 @@ class news_api extends App_Controller
 	//@@Time:
 	public function index_list()
 	{
-		//POST获取页数
+		//POST获取页数RewriteRule ^/app/(.*)$ /app/index.php?/$1 [L]
 		$page = $this->input->get_post('page', TRUE);
 		if( empty( $page ) ) $page = 1;
 		

@@ -4,26 +4,53 @@
 //@@Type:API-Controller
 //@@Anthor:titan
 //@@Time:
-class user_api extends MY_Controller
+class user_api extends App_Controller
 {
 	public function __construct()
 	{
 		parent::__construct();
+		$this->load->model( 'user_model' );
 	}
 
-	//@@FuncName:user_detail
+	//@@FuncName:user_info
 	//@@Description:用户详情
 	//@@Open:public
 	//@@Parameters:None
 	//@@Anthor:titan
 	//@@Time:
-	public function user_detail()
+	public function user_info()
 	{
 		//POST接收用户ID
-
+		$u_id = $this->input->get_post( 'u_id', TRUE );
+		
 		//Model获取数据
+		$user = $this->user_model->get_user_base( $u_id );
+		if( ! $user )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 用户不存在';
+			exit( json_encode( $arr ) );
+		}
+		else
+		{
+			$data['base'] = $user;
+		}
+
+		$profile = $this->user_model->get_user_profile( $u_id );
+		$( $profile )
+		{
+			$data['profile'] = $profile;
+		}
+		else
+		{
+			$data['profile'] = false;
+		}
 
 		//return数据
+		$arr['code'] = 10010;
+		$arr['message'] = '[success]';
+		$arr['data'] = $data;
+		exit( json_encode( $arr ) );
 	}
 
 	//@@FuncName:message

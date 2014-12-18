@@ -53,27 +53,6 @@ class user_api extends App_Controller
 		exit( json_encode( $arr ) );
 	}
 
-	//@@FuncName:message
-	//@@Description:留言
-	//@@Open:public
-	//@@Parameters:None
-	//@@Anthor:titan
-	//@@Time:
-	public function message()
-	{
-		//POST接收用户ID
-
-		//POST接收留言内容
-		//
-		//判断内容是否为空
-		//
-		//不为空,执行过滤
-
-		//Model获取数据
-
-		//return数据
-	}
-
 	//@@FuncName:rewards
 	//@@Description:打赏记录
 	//@@Open:public

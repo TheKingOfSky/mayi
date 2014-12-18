@@ -4,7 +4,7 @@
 //@@Type:API-Controller
 //@@Anthor:titan
 //@@Time:
-class comment_api extends MY_Controller
+class comment_api extends App_Controller
 {
 	public function __construct()
 	{
@@ -35,11 +35,24 @@ class comment_api extends MY_Controller
 		//Model层获取数据
 		$this->comment->set_step( 10 );
 		$this->comment->set_page( $page );
-		$arr['data'] = $this->comment_model->get_news_comment( $news_id );
+		$data = $this->comment_model->get_news_comment( $news_id );
 
+		if( empty( $data ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 数据为空';
+			exit( json_encode( $arr ) );
+		}
+
+		foreach( $data as $k=>$v )
+		{
+			$data[$k]['userinfo'] = $this->user_model->get_user_base( $v['u_id'] );
+		}
+			
 		//return数据
 		$arr['code'] = 10010;
 		$arr['message'] = '[success]';
+		$arr['data'] = $data;
 		exit( json_encode( $arr ) );
 	}
 
@@ -96,6 +109,16 @@ class comment_api extends MY_Controller
 		//Model层插入动态
 		//
 		//return执行结果
+		if( empty( $result ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 数据错误';
+			exit( json_encode( $arr ) );
+		}
+
+		$arr['code'] = 10010;
+		$arr['message'] = '[success]';
+		exit( json_encode( $arr ) );
 	}
 }
 

@@ -10,6 +10,7 @@ class comment_api extends App_Controller
 	{
 		parent::__construct();
 		$this->load->model( 'comment_model' );
+		$this->load->model( 'user_model' );
 	}
 
 	//@@FuncName:news_comment_list

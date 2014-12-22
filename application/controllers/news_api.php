@@ -9,7 +9,8 @@ class news_api extends App_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model('news_model');
+		$this->load->model( 'news_model' );
+		$this->load->model( 'user_model' );
 	}
 	
 	//@@FuncName:index_list
@@ -45,19 +46,49 @@ class news_api extends App_Controller
 		//return数据
 	}
 
-	//@@FuncName:class_list
+	//@@FuncName:tag_list
 	//@@Description:APP分类列表
 	//@@Open:public
 	//@@Parameter:None
 	//@@Anthor:titan
 	//@@Time:
-	public function class_list()
+	public function tag_list()
 	{
-		//POST接收分类ID
+		//POST接收tag_ID
+		$tag = $this->input->get_post( 'tag_id', TRUE );
+		if( empty( $tag ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 没有接收到TAGID';
+			exit( json_encode( $arr ) );
+		}
+
+		//POST接收页码
+		$page = $this->input->get_post( 'page', TRUE );
+		if( empty( $page ) )
+		{
+			$page = 1;
+		}
 
 		//用Model层获取list
+		$this->news_model->set_step( 10 );
+		$this->news_model->set_page( $page );
+		$arr['data'] = $this->news_model->get_news_for_tag( $tag );
+
+		//获取用户详情
+		if( is_array( $arr['data'] ) )
+		{
+			foreach( $arr['data'] as $k=>$v )
+			{
+				$arr['data'][$k]['userinfo'] = $this->user_model->get_user_base( $v['u_id'] );
+			}
+		}
+
+		$arr['code'] = 10010;
+		$arr['message'] = '[success]';
 
 		//return数据
+		exit( json_encode( $arr ) );
 	}
 
 	//@@FuncName:user_list

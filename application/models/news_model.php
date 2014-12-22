@@ -5,6 +5,8 @@ class news_model extends CI_Model
 	private $_start = 1;
 	private $_step = 10;
 	private $_table = 'news';
+	private $_tag_table = 'tags_news';
+
 	function __construct()
 	{
 		parent::__construct();
@@ -22,6 +24,17 @@ class news_model extends CI_Model
 	{
 		$this->db->where( 'id', $id );
 		return $this->db->get( $this->_table )->result_array();
+	}
+
+	public function get_news_for_tag( $tag )
+	{
+		$this->db->select( $this->_table.'.*' );
+		$this->db->limit( $this->_step, $this->_start );
+		$this->db->from( $this->_table );
+		$this->db->join( $this->_tag_table, $this->_table.'.id = '.$this->_tag_table.'.news_id' );
+		$this->db->order_by( $this->_table.'.createtime', 'DESC' );
+		$this->db->where( $this->_tag_table.'.tag_id', $tag );
+		return $this->db->get()->result_array();
 	}
 
 	//@@设置页数

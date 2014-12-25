@@ -177,10 +177,39 @@ class news_api extends App_Controller
 	public function mood_list()
 	{
 		//POST接收心情ID
+		$mood_id = $this->input->get_post( 'mood_id', TRUE );
+		if( empty( $mood_id ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 没有接收到心情ID';
+			exit( json_encode( $arr ) );
+		}
+		//POST接收页码
+		$page = $this->input->get_post( 'page', TRUE );
+		if( empty( $page ) )
+		{
+			$page = 1;
+		}
 
-		//Model层获取list
-		
+		//用Model层获取list
+		$this->news_model->set_step( 10 );
+		$this->news_model->set_page( $page );
+		$arr['data'] = $this->news_model->get_news_for_mood( $mood_id );
+
+		//获取用户详情
+		if( is_array( $arr['data'] ) )
+		{
+			foreach( $arr['data'] as $k=>$v )
+			{
+				$arr['data'][$k]['userinfo'] = $this->user_model->get_user_base( $v['u_id'] );
+			}
+		}
+
+		$arr['code'] = 10010;
+		$arr['message'] = '[success]';
+
 		//return数据
+		exit( json_encode( $arr ) );
 	}
 
 	//@@FuncName:news_detail

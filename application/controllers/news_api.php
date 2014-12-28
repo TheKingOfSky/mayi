@@ -115,10 +115,23 @@ class news_api extends App_Controller
 	public function search_list()
 	{
 		//POST接收关键字
-
+		$key = $this->input->get_post( 'key', TRUE );
+		if( empty( $key ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 没有接收到关键字';
+			exit( json_encode( $arr ) );
+		}
+		
 		//Model层获取list
+		$this->load->model( 'search_model' );
+		$data = $this->search_model->get_list( $key );
 
 		//return数据
+		$arr['code'] = 10010;
+		$arr['message'] = '[success]';
+		$arr['data'] = $data;
+		exit( json_encode( $arr ) );
 	}
 
 	//@@FuncName:favorite_list
@@ -160,7 +173,7 @@ class news_api extends App_Controller
 	public function about_list()
 	{
 		//POST接收该新闻ID
-
+		
 		//算法获取get数据条件
 
 		//Model层获取list
@@ -239,6 +252,42 @@ class news_api extends App_Controller
 			$arr['message'] = '[success]';
 		}
 
+		exit( json_encode( $arr ) );
+	}
+
+	public function get_tag_list()
+	{
+		$this->load->model( 'tag_model' );
+		
+		$data = $this->tag_model->get_list();
+		if( empty( $data ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 没有数据';
+			exit( json_encode( $arr ) );
+		}
+
+		$arr['data'] = $data;
+		$arr['code'] = 10010;
+		$arr['message'] = '[success]';
+		exit( json_encode( $arr ) );
+	}
+
+	public function get_mood_list()
+	{
+		$this->load->model( 'mood_model' );
+
+		$data = $this->mood_model->get_list();
+		if( empty( $data ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 没有数据';
+			exit( json_encode( $arr ) );
+		}
+
+		$arr['data'] = $data;
+		$arr['code'] = 10010;
+		$arr['message'] = '[success]';
 		exit( json_encode( $arr ) );
 	}
 

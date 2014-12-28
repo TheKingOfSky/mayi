@@ -45,7 +45,7 @@ class news_model extends CI_Model
 		$this->db->from( $this->_table );
 		$this->db->join( $this->_mood_table, $this->_table.'.id = '.$this->_mood_table.'.news_id' );
 		$this->db->order_by( $this->_table.'.createtime', 'DESC' );
-		$this->db->where( $this->_mood_table.'.mood_id', $tag );
+		$this->db->where( $this->_mood_table.'.mood_id', $mood_id );
 		return $this->db->get()->result_array();
 	}
 

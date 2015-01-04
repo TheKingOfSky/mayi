@@ -7,6 +7,7 @@ class news_model extends CI_Model
 	private $_table = 'news';
 	private $_tag_table = 'tags_news';
 	private $_mood_table = 'mood_news';
+	private $_favorite_table = 'favorite';
 
 	function __construct()
 	{
@@ -46,6 +47,24 @@ class news_model extends CI_Model
 		$this->db->join( $this->_mood_table, $this->_table.'.id = '.$this->_mood_table.'.news_id' );
 		$this->db->order_by( $this->_table.'.createtime', 'DESC' );
 		$this->db->where( $this->_mood_table.'.mood_id', $mood_id );
+		return $this->db->get()->result_array();
+	}
+
+	public function get_user_news_list( $u_id )
+	{
+		$this->db->where( 'u_id', $u_id );
+		$this->db->limit( $this->_step, $this->_start );
+		return $this->db->get( $this->_table )->result_array();
+	}
+
+	public function get_user_favorite_list( $u_id )
+	{
+		$this->db->select( $this->_table.'.*' );
+		$this->db->limit( $this->_step, $this->_start );
+		$this->db->from( $this->_table );
+		$this->db->join( $this->_favorite_table, $this->_table.'.id = '.$this->_favorite_table.'.object_id' );
+		$this->db->order_by( $this->_table.'.createtime', 'DESC' );
+		$this->db->where( $this->_favorite_table.'.u_id', $u_id );
 		return $this->db->get()->result_array();
 	}
 

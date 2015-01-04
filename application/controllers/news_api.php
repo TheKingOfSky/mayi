@@ -100,10 +100,38 @@ class news_api extends App_Controller
 	public function user_list()
 	{
 		//POST接收小编ID
+		$u_id = $this->input->get_post( 'u_id', TRUE );
+		if( empty( $u_id ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 没有接收到u_id';
+			exit( json_encode( $arr ) );
+		}
 
+		$page = $this->input->get_post( 'page', TRUE );
+		if( empty( $page ) )
+		{
+			$page = 1;
+		}
 		//Model层获取list
+		$this->news_model->set_page( $page );
+		$this->news_model->set_step( 10 );
+		$arr['data'] = $this->news_model->get_user_news_list( $u_id );
+
+		//获取用户详情
+		if( is_array( $arr['data'] ) )
+		{
+			foreach( $arr['data'] as $k=>$v )
+			{
+				$arr['data'][$k]['userinfo'] = $this->user_model->get_user_base( $v['u_id'] );
+			}
+		}
+
+		$arr['code'] = 10010;
+		$arr['message'] = '[success]';
 
 		//return数据
+		exit( json_encode( $arr ) );
 	}
 
 	//@@FuncName:search_list
@@ -143,10 +171,40 @@ class news_api extends App_Controller
 	public function favorite_list()
 	{
 		//POST接收用户ID
+		$u_id = $this->input->get_post( 'u_id', TRUE );
+		if( empty( $u_id ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 没有接收到u_id';
+			exit( json_encode( $arr ) );
+		}
 
+		$page = $this->input->get_post( 'page', TRUE );
+
+		if( empty( $page ) )
+		{
+			$page = 1;
+		}
+		
 		//Model层获取list
+		$this->news_model->set_page( $page );
+		$this->news_model->set_step( 10 );
+		$arr['data'] = $this->news_model->get_user_favorite_list( $u_id );
+		
+		//获取用户详情
+		if( is_array( $arr['data'] ) )
+		{
+			foreach( $arr['data'] as $k=>$v )
+			{
+				$arr['data'][$k]['userinfo'] = $this->user_model->get_user_base( $v['u_id'] );
+			}
+		}
+
+		$arr['code'] = 10010;
+		$arr['message'] = '[success]';
 
 		//return数据
+		exit( json_encode( $arr ) );
 	}
 
 	//@@FuncName:read_list

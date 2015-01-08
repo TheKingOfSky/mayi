@@ -231,12 +231,36 @@ class news_api extends App_Controller
 	public function about_list()
 	{
 		//POST接收该新闻ID
-		
-		//算法获取get数据条件
+		$news_id = $this->input->get_post( 'news_id', TRUE );
+		if( empty( $news_id ) )
+		{
+			$arr['message'] = '[error] 没有接收到 news_id';
+			$arr['code'] = 20010;
+			exit( json_encode( $arr ) );
+		}
 
-		//Model层获取list
-		
+		//算法获取get数据条件
+		$tag_id = $this->news_model->get_tag_for_news( $news_id );
+
+		//用Model层获取list
+		$this->news_model->set_step( 8 );
+		$this->news_model->set_page( 1 );
+		$arr['data'] = $this->news_model->get_news_for_tag( $tag_id );
+
+		//获取用户详情
+		//if( is_array( $arr['data'] ) )
+		//{
+			//foreach( $arr['data'] as $k=>$v )
+			//{
+				//$arr['data'][$k]['userinfo'] = $this->user_model->get_user_base( $v['u_id'] );
+			//}
+		//}
+
+		$arr['code'] = 10010;
+		$arr['message'] = '[success]';
+
 		//return数据
+		exit( json_encode( $arr ) );
 	}
 
 	//@@FuncName:mood_list

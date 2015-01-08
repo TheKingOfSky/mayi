@@ -12,7 +12,7 @@ class comment_api extends App_Controller
 		$this->load->model( 'comment_model' );
 		$this->load->model( 'user_model' );
 	}
-
+	
 	//@@FuncName:news_comment_list
 	//@@Description:新闻评论列表
 	//@@Open:public
@@ -120,6 +120,65 @@ class comment_api extends App_Controller
 		$arr['code'] = 10010;
 		$arr['message'] = '[success]';
 		exit( json_encode( $arr ) );
+	}
+
+	//@@FuncName: zan_comment
+	//@@Description: 赞评论
+	//@@Open:public
+	//@@Parameters: None
+	//@@Anthor:titan
+	//@@Time:
+	public function zan_comment()
+	{
+		$comment_id = $this->input->get_post( 'comment_id', TRUE );
+		if( ! $this->comment_model->comment_isset( $comment_id ) )
+		{
+			$arr['message'] = '[error] 评论不存在';
+			$arr['code'] = 20010;
+			exit( json_encode( $arr ) );
+		}
+
+		if( ! $this->comment_model->zan( $comment_id ) )
+		{
+			$arr['message'] = '[error] 操作失败';
+			$arr['code'] = 20010;
+			exit( json_encode( $arr ) );
+		}
+
+		$arr['message'] = '[success]';
+		$arr['code'] = 10010;
+		exit( json_encode( $arr ) );
+	}
+
+	//@@FuncName: my_sent_comment
+	//@@Description: 我发表的评论列表
+	//@@Open:public
+	//@@Parameters: None
+	//@@Anthor:titan
+	//@@Time:
+	public function my_sent_comment()
+	{
+		$u_id = $this->input->get_post( 'u_id', TRUE );
+		if( empty( $u_id ) )
+		{
+			$arr['message'] = '[error] 没有接收到用户ID';
+			$arr['code'] = 20010;
+			exit( json_encode( $arr ) );
+		}
+
+		$page = $this->input->get_post( 'page', TRUE );
+		if( empty( $page ) )
+		{
+			$page = 1;	
+		}
+
+		$this->comment_model->set_step( 10 );
+		$this->comment_model->set_page( $page );
+		$arr['data'] = $this->comment_model->get_my_sent_comment_list( $u_id );
+		$arr['message'] = '[success]';
+		$arr['code'] = 10010;
+		exit( json_encode( $arr ) );
+		
 	}
 }
 

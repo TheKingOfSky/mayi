@@ -34,8 +34,8 @@ class comment_api extends App_Controller
 		}
 
 		//Model层获取数据
-		$this->comment->set_step( 10 );
-		$this->comment->set_page( $page );
+		$this->comment_model->set_step( 10 );
+		$this->comment_model->set_page( $page );
 		$data = $this->comment_model->get_news_comment( $news_id );
 
 		if( empty( $data ) )
@@ -104,11 +104,11 @@ class comment_api extends App_Controller
 		$arr['p_id'] = $p_id;
 		
 		//检测@,有@的话插入@表
-		//
+		
 		//Model层插入数据,并获得执行结果
 		$result = $this->comment_model->insert_comment( $arr );
 		//Model层插入动态
-		//
+		
 		//return执行结果
 		if( empty( $result ) )
 		{
@@ -116,6 +116,13 @@ class comment_api extends App_Controller
 			$arr['message'] = '[error] 数据错误';
 			exit( json_encode( $arr ) );
 		}
+
+		//写入动态
+		$this->load->model( 'news_model' );
+		$news = $this->news_model->get_news_detail( $news_id );
+		$this->load->library( 'user_lib' );
+		$action = $this->user_lib->get_username_for_id( $u_id ).'对《'. $news[0]['title'] .'》做出了评论: '. $content;
+		$this->action_model->create_comment_record( $u_id, $news_id, $action );
 
 		$arr['code'] = 10010;
 		$arr['message'] = '[success]';

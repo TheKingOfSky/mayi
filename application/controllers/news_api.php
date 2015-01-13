@@ -319,6 +319,14 @@ class news_api extends App_Controller
 		$id = $this->input->get_post( 'id', TRUE );
 		if( empty( $id ) ) exit( json_encode( array( 'code'=>20010, 'message'=>'[error] 未接收到新闻ID' ) ) );
 
+		$u_id = $this->input->get_post( 'u_id', TRUE );
+		if( empty( $u_id ) )
+		{
+			$arr['code'] = 20010;
+			$arr['message'] = '[error] 没有接收到u_id';
+			exit( json_encode( $arr ) );
+		}
+
 		//Model层获取新闻详情
 		$arr['data'] = $this->news_model->get_news_detail( $id );
 
@@ -330,6 +338,10 @@ class news_api extends App_Controller
 		}
 		else
 		{
+			$this->load->model( 'action_model' );
+			$this->load->library( 'user_lib' );
+			$action = $this->user_lib->get_username_for_id( $u_id ).'阅读了《' . $arr['data'][0]['title'] . '》';
+			$this->action_model->create_read_record( $u_id, $id, $action );
 			$arr['code'] = 10010;
 			$arr['message'] = '[success]';
 		}

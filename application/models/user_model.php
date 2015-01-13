@@ -22,7 +22,7 @@ class user_model extends CI_Model
 	public function get_user_base( $u_id )
 	{
 		$this->db->where( 'id', $u_id );
-		$result = $this->db->get( 'user' )->result_array();
+		$result = $this->db->get( 'user' )->row();
 		return $result;
 	}
 

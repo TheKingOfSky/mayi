@@ -3,7 +3,7 @@ class comment_model extends CI_Model
 {
 	private $_start = 0;
 	private $_step = 10;
-	private $_table = 'comment';
+	private $_table = 'comments';
 
 	public function __construct()
 	{
